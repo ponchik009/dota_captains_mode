@@ -22,6 +22,8 @@ jobs:
       - run: npm run build
 
       - run: ls
+      - run: mv build dota_captains_mode
+      - run: ls
       - uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
@@ -29,5 +31,5 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           source: build
-          target: /var/www/dota_captains_mode
+          target: /var/www
       - run: ls
