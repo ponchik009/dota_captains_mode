@@ -1,15 +1,28 @@
-name: Node.js CD
+name: Node.js CI
 
-# Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [master]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  build:
+    name: Build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: npm i
+      - run: npm run build
+
   deploy:
     name: Deploy
+
+    needs: build
 
     runs-on: ubuntu-latest
 
