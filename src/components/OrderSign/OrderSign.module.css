@@ -1,0 +1,50 @@
+.orderSign {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--text-color);
+}
+
+.orderSignActive {
+  color: var(--text-active-color);
+}
+
+.orderSign hr {
+  background-color: var(--text-color);
+  height: 1px;
+  width: 40.7px;
+}
+
+.orderSignActive hr {
+  background-color: var(--text-active-color);
+}
+
+.orderSign-sm hr {
+  width: 36.5px;
+}
+
+.orderSign-top {
+  top: 0;
+}
+
+.orderSign-middle {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.orderSign-bottom {
+  bottom: 0;
+}
+
+.orderSign-left {
+  left: 100%;
+}
+
+.orderSign-right {
+  right: 100%;
+
+  flex-direction: row-reverse;
+}

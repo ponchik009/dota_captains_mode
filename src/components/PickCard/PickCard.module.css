@@ -1,0 +1,50 @@
+:root {
+  --card-w-md: 76px;
+  --card-w-lg: 124px;
+
+  --card-h-md: 44px;
+  --card-h-lg: 64px;
+
+  --card-d-md: 80px;
+}
+
+.card {
+  border-radius: 8px;
+  border: 1px solid var(--text-color);
+  background-color: var(--card-color);
+
+  position: relative;
+}
+
+.card-active {
+  border-color: var(--text-active-color);
+  background-color: var(--card-active-color);
+
+  box-shadow: 0px 0px 10px var(--box-shadow-blue);
+}
+
+.card-md {
+  width: var(--card-w-md);
+  height: var(--card-h-md);
+}
+
+.card-lg {
+  width: var(--card-w-lg);
+  height: var(--card-h-lg);
+}
+
+.card-md.card-banned::after {
+  content: "";
+
+  position: absolute;
+  left: 2px;
+  top: 2px;
+
+  background-color: red;
+
+  transform-origin: 0% 0%;
+  transform: rotateZ(28deg);
+
+  height: 2px;
+  width: var(--card-d-md);
+}

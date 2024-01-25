@@ -1,0 +1,42 @@
+.timing {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  position: fixed;
+  top: 8px;
+}
+
+.timingLeft {
+  left: 8px;
+  align-items: flex-start;
+}
+
+.timingRight {
+  right: 8px;
+  align-items: flex-end;
+}
+
+.timing span {
+  transition: transform 0.5s;
+  transform: scale(1);
+
+  color: var(--text-color);
+}
+
+.timingLeft.timingActive .baseTime {
+  color: var(--radiant-color);
+}
+
+.timingRight.timingActive .baseTime {
+  color: var(--dire-color);
+}
+
+.timingActive .bonusTime {
+  color: var(--bonus-color);
+}
+
+.timing.timingActive .bonusTime_active,
+.timing.timingActive .baseTime_active {
+  transform: scale(1.5);
+}
