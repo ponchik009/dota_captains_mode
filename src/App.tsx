@@ -73,7 +73,12 @@ function App() {
   const onPick = (cardOrder: number, random: boolean = false) => {
     if (currentPick === cardOrder) {
       if (random) {
-        const randomHero = heroes[Math.floor(Math.random() * heroes.length)];
+        let randomHero = heroes[Math.floor(Math.random() * heroes.length)];
+        // exclude already picked
+        while (pickBans.some((pb) => pb.hero.id === randomHero.id)) {
+          randomHero = heroes[Math.floor(Math.random() * heroes.length)];
+        }
+
         onHeroClick(randomHero.id);
       } else {
         setHeroesListOpened(true);
@@ -190,8 +195,13 @@ function App() {
         active={activeSide === "dire"}
       />
       <HeroesList
-        heroes={heroes}
         opened={heroesListOpened}
+        onClose={() => setHeroesListOpened(false)}
+        heroes={heroes}
+        disabledHeroes={pickBans.map((pb) => ({
+          id: pb.hero.id,
+          type: pb.type,
+        }))}
         onHeroClick={onHeroClick}
       />
       <div className="picks">

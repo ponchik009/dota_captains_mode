@@ -189,7 +189,12 @@ export const orderToStage = pickStages.reduce<OrderToStage>((acc, cur) => {
 }, {});
 
 export const orderToPickBan = pickStages.reduce<OrderToPickBan>((acc, cur) => {
-  acc[cur.stage] = cur.type === "bans" ? "ban" : "pick";
+  cur.dire.forEach(
+    (pb) => (acc[pb.order] = cur.type === "bans" ? "ban" : "pick")
+  );
+  cur.radiant.forEach(
+    (pb) => (acc[pb.order] = cur.type === "bans" ? "ban" : "pick")
+  );
 
   return acc;
 }, {});

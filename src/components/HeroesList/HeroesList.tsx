@@ -3,14 +3,17 @@ import React from "react";
 import classNames from "classnames";
 
 import styles from "./HeroesList.module.css";
+import { ReactComponent as IconArrowLeft } from "../../assets/IconArrowLeft.svg";
 
 import { Hero } from "../../types/data.types";
-import { GroupedHeroes } from "../../types/state.types";
+import { GroupedHeroes, PickBan } from "../../types/state.types";
 
 interface IHeroesListProps {
   opened: boolean;
+  onClose: () => void;
 
   heroes: Hero[];
+  disabledHeroes: { id: number; type: PickBan }[];
 
   onHeroClick: (heroId: number) => void;
 }
@@ -35,10 +38,18 @@ function sortHeroes(h1: Hero, h2: Hero) {
 }
 
 export const HeroesList: React.FC<IHeroesListProps> = React.memo(
-  ({ heroes, opened, onHeroClick }) => {
+  ({ heroes, opened, onHeroClick, disabledHeroes, onClose }) => {
     const [groupedHeroes, setGroupedHeroes] = React.useState<GroupedHeroes>(
       groupHeroes(heroes)
     );
+
+    const handleHeroClick = (id: number) => {
+      const disabled = disabledHeroes.some((dh) => dh.id === id);
+
+      if (!disabled) {
+        onHeroClick(id);
+      }
+    };
 
     React.useEffect(() => {
       setGroupedHeroes(groupHeroes(heroes));
@@ -61,17 +72,32 @@ export const HeroesList: React.FC<IHeroesListProps> = React.memo(
           [styles.heroesWrapperOpened]: opened,
         })}
       >
-        {Object.values(groupedHeroes).map((attrHeroes) => (
-          <div className={styles.heroesList}>
-            {attrHeroes.map((h) => (
-              <img
-                onClick={() => onHeroClick(h.id)}
-                className={styles.heroImage}
-                key={h.id}
-                src={h.img}
-                alt={h.localized_name}
-              />
-            ))}
+        <button className={styles.backButton} onClick={onClose}>
+          <IconArrowLeft />
+          Back
+        </button>
+        {Object.values(groupedHeroes).map((attrHeroes, index) => (
+          <div className={styles.heroesList} key={index}>
+            {attrHeroes.map((h) => {
+              const disabledHero = disabledHeroes.find((db) => db.id == h.id);
+              return (
+                <div
+                  className={classNames(styles.heroImageWrapper, {
+                    [styles.heroBanned]: disabledHero?.type === "ban",
+                  })}
+                  key={h.id}
+                >
+                  <img
+                    onClick={() => handleHeroClick(h.id)}
+                    className={classNames(styles.heroImage, {
+                      [styles.heroImageDisabled]: disabledHero,
+                    })}
+                    src={h.img}
+                    alt={h.localized_name}
+                  />
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

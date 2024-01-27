@@ -14,7 +14,7 @@
 
   background-color: var(--bg-color);
 
-  padding: 8px 0;
+  padding: 16px 0 8px 0;
 
   overflow-y: auto;
 
@@ -26,11 +26,61 @@
   transform: translateX(0);
 }
 
+.backButton {
+  cursor: pointer;
+
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  font-size: 18px;
+  color: var(--text-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.backButton svg {
+  fill: var(--text-color);
+  width: 24px;
+  height: 24px;
+}
+
 .heroesList {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
 
+.heroImageWrapper {
+  position: relative;
+}
+
+.heroBanned::after {
+  content: "";
+
+  position: absolute;
+  left: 2px;
+  top: 2px;
+
+  transform-origin: 0% 0%;
+  transform: rotateZ(28deg);
+
+  height: 2px;
+  width: 81px;
+
+  background-color: red;
+}
+
+.heroPicked::after {
+}
+
 .heroImage {
   width: max(64px, 20vw);
+  display: block;
+}
+
+.heroImageDisabled {
+  filter: brightness(20%);
 }
