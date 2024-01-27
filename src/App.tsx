@@ -7,9 +7,18 @@ import { PickCard } from "./components/PickCard/PickCard";
 import { OrderSign } from "./components/OrderSign/OrderSign";
 import { ActiveTime, Timing } from "./components/Timing/Timing";
 
-import { maxPick, orderToSide, orderToStage, pickStages } from "./const/stages";
+import {
+  maxPick,
+  orderToPickBan,
+  orderToSide,
+  orderToStage,
+  pickStages,
+} from "./const/stages";
 import { BONUS_TIME, DEFAULT_PHASE, FIRST_PHASE } from "./const/timings";
-import { SidesType } from "./types/state.types";
+import { PickedHero, SidesType } from "./types/state.types";
+import { Hero } from "./types/data.types";
+import { OpenDotaApi } from "./api/openDotaApi";
+import { HeroesList } from "./components/HeroesList/HeroesList";
 
 function App() {
   const [activeSide, setActiveSide] = React.useState<SidesType>("radiant");
@@ -22,6 +31,10 @@ function App() {
   const [direBonusTime, setDireBonusTime] = React.useState(BONUS_TIME);
 
   const currentTimer = React.useRef<NodeJS.Timeout | null>(null);
+
+  const [heroesListOpened, setHeroesListOpened] = React.useState(false);
+  const [heroes, setHeroes] = React.useState<Hero[]>([]);
+  const [pickBans, setPickBans] = React.useState<PickedHero[]>([]);
 
   const updateTime = () => {
     if (activeSide === "radiant") {
@@ -57,18 +70,49 @@ function App() {
     }
   };
 
-  const onPick = (cardOrder: number) => {
+  const onPick = (cardOrder: number, random: boolean = false) => {
     if (currentPick === cardOrder) {
-      setCurrentPick((prev) => {
-        const nextValue = prev + 1;
-        const nextSide = orderToSide[nextValue];
-
-        setActiveSide(nextSide);
-
-        return nextValue;
-      });
+      if (random) {
+        const randomHero = heroes[Math.floor(Math.random() * heroes.length)];
+        onHeroClick(randomHero.id);
+      } else {
+        setHeroesListOpened(true);
+      }
     }
   };
+
+  const onHeroClick = (heroId: number) => {
+    setHeroesListOpened(false);
+
+    setPickBans((prev) => {
+      const hero = heroes.find((h) => h.id === heroId)!;
+      const order = currentPick;
+      const side = activeSide;
+      const type = orderToPickBan[order];
+
+      prev.push({
+        hero,
+        order,
+        side,
+        type,
+      });
+
+      return prev;
+    });
+
+    setCurrentPick((prev) => {
+      const nextValue = prev + 1;
+      const nextSide = orderToSide[nextValue];
+
+      setActiveSide(nextSide);
+
+      return nextValue;
+    });
+  };
+
+  React.useEffect(() => {
+    OpenDotaApi.getHeroes().then(setHeroes);
+  }, []);
 
   React.useEffect(() => {
     updateTimer();
@@ -98,7 +142,7 @@ function App() {
       if (radiantBonusTime > 0) {
         setActiveTime("bonus");
       } else {
-        onPick(currentPick);
+        onPick(currentPick, true);
       }
     }
   }, [radiantBaseTime]);
@@ -108,7 +152,7 @@ function App() {
       if (direBonusTime > 0) {
         setActiveTime("bonus");
       } else {
-        onPick(currentPick);
+        onPick(currentPick, true);
       }
     }
   }, [direBaseTime]);
@@ -117,7 +161,7 @@ function App() {
     if (radiantBonusTime === 0) {
       resetTimer();
       // end bonus time logic
-      onPick(currentPick);
+      onPick(currentPick, true);
     }
   }, [radiantBonusTime]);
 
@@ -125,7 +169,7 @@ function App() {
     if (direBonusTime === 0) {
       resetTimer();
       // end bonus time logic
-      onPick(currentPick);
+      onPick(currentPick, true);
     }
   }, [direBonusTime]);
 
@@ -144,6 +188,11 @@ function App() {
         bonusTime={direBonusTime}
         activeTime={activeTime}
         active={activeSide === "dire"}
+      />
+      <HeroesList
+        heroes={heroes}
+        opened={heroesListOpened}
+        onHeroClick={onHeroClick}
       />
       <div className="picks">
         <div className="stage">
@@ -171,44 +220,56 @@ function App() {
           return (
             <div className="stage" key={stage.stage}>
               <div className="side radiant">
-                {stage.radiant.map((pickBan) => (
-                  <PickCard
-                    size={size}
-                    active={currentPick === pickBan.order}
-                    onClick={() => onPick(pickBan.order)}
-                    banned={
-                      stage.type === "bans" && currentPick > pickBan.order
-                    }
-                    key={pickBan.order}
-                  >
-                    <OrderSign
-                      num={pickBan.order}
-                      horizontal={"left"}
-                      vertical={pickBan.vertical}
+                {stage.radiant.map((pickBan) => {
+                  const hero = pickBans.find(
+                    (pb) => pb.order === pickBan.order
+                  );
+                  return (
+                    <PickCard
+                      size={size}
                       active={currentPick === pickBan.order}
-                    />
-                  </PickCard>
-                ))}
+                      onClick={() => onPick(pickBan.order)}
+                      banned={
+                        stage.type === "bans" && currentPick > pickBan.order
+                      }
+                      key={pickBan.order}
+                      img={hero?.hero.img}
+                    >
+                      <OrderSign
+                        num={pickBan.order}
+                        horizontal={"left"}
+                        vertical={pickBan.vertical}
+                        active={currentPick === pickBan.order}
+                      />
+                    </PickCard>
+                  );
+                })}
               </div>
               <div className="side dire" style={{ justifyContent: "flex-end" }}>
-                {stage.dire.map((pickBan) => (
-                  <PickCard
-                    size={size}
-                    active={currentPick === pickBan.order}
-                    onClick={() => onPick(pickBan.order)}
-                    banned={
-                      stage.type === "bans" && currentPick > pickBan.order
-                    }
-                    key={pickBan.order}
-                  >
-                    <OrderSign
-                      num={pickBan.order}
-                      horizontal={"right"}
-                      vertical={pickBan.vertical}
+                {stage.dire.map((pickBan) => {
+                  const hero = pickBans.find(
+                    (pb) => pb.order === pickBan.order
+                  );
+                  return (
+                    <PickCard
+                      size={size}
                       active={currentPick === pickBan.order}
-                    />
-                  </PickCard>
-                ))}
+                      onClick={() => onPick(pickBan.order)}
+                      banned={
+                        stage.type === "bans" && currentPick > pickBan.order
+                      }
+                      key={pickBan.order}
+                      img={hero?.hero.img}
+                    >
+                      <OrderSign
+                        num={pickBan.order}
+                        horizontal={"right"}
+                        vertical={pickBan.vertical}
+                        active={currentPick === pickBan.order}
+                      />
+                    </PickCard>
+                  );
+                })}
               </div>
             </div>
           );

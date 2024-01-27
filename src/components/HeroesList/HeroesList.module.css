@@ -1,0 +1,36 @@
+.heroesWrapper {
+  z-index: 2;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  background-color: var(--bg-color);
+
+  padding: 8px 0;
+
+  overflow-y: auto;
+
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-in;
+}
+
+.heroesWrapperOpened {
+  transform: translateX(0);
+}
+
+.heroesList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.heroImage {
+  width: max(64px, 20vw);
+}

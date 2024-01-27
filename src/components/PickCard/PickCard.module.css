@@ -1,11 +1,12 @@
 :root {
-  --card-w-md: 76px;
-  --card-w-lg: 124px;
+  /* пропорция 0,5625 */
+  --card-w-md: 78px;
+  --card-w-lg: 114px;
 
   --card-h-md: 44px;
   --card-h-lg: 64px;
 
-  --card-d-md: 80px;
+  --card-d-md: 81px;
 }
 
 .card {
@@ -47,4 +48,18 @@
 
   height: 2px;
   width: var(--card-d-md);
+}
+
+.cardImage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  border-radius: 8px;
+}
+
+.card-md .cardImage {
+  filter: brightness(50%);
 }

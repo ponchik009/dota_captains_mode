@@ -5,6 +5,8 @@
 
   position: fixed;
   top: 8px;
+
+  z-index: 3;
 }
 
 .timingLeft {

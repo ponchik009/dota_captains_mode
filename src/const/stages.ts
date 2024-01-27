@@ -1,5 +1,5 @@
 import { SignVertical } from "../components/OrderSign/OrderSign";
-import { SidesType } from "../types/state.types";
+import { SidesType, PickBan as PickBanHeroType } from "../types/state.types";
 
 export type Stage = "picks" | "bans";
 
@@ -21,6 +21,10 @@ export type OrderToSide = {
 
 export type OrderToStage = {
   [key: string]: number;
+};
+
+export type OrderToPickBan = {
+  [key: string]: PickBanHeroType;
 };
 
 export const pickStages: PickStage[] = [
@@ -180,6 +184,12 @@ export const orderToSide = pickStages.reduce<OrderToSide>((acc, cur) => {
 export const orderToStage = pickStages.reduce<OrderToStage>((acc, cur) => {
   cur.dire.forEach((pickBan) => (acc[String(pickBan.order)] = cur.stage));
   cur.radiant.forEach((pickBan) => (acc[String(pickBan.order)] = cur.stage));
+
+  return acc;
+}, {});
+
+export const orderToPickBan = pickStages.reduce<OrderToPickBan>((acc, cur) => {
+  acc[cur.stage] = cur.type === "bans" ? "ban" : "pick";
 
   return acc;
 }, {});
