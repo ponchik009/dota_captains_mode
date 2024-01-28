@@ -1,0 +1,131 @@
+.homePage {
+  align-items: center;
+  justify-content: center;
+}
+
+.welcomeBlock {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+
+  width: 100%;
+
+  text-align: center;
+}
+
+.playButton {
+  padding: 8px 32px;
+  width: fit-content;
+
+  background-color: var(--button-find-color);
+  box-shadow: 0px 0px 10px var(--box-shadow-blue);
+
+  color: var(--text-active-color);
+  text-transform: uppercase;
+}
+
+.lobbySettingsWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  visibility: hidden;
+
+  height: 100%;
+  width: 100%;
+
+  transition: backdrop-filter 0.5s ease-in, visibility 0.5s ease-in;
+  backdrop-filter: blur(0px);
+}
+
+.lobbySettingsWrapperOpened {
+  visibility: visible;
+  backdrop-filter: blur(3px);
+}
+
+.lobbySettings {
+  position: fixed;
+  top: 45vh;
+  z-index: 5;
+
+  width: 100%;
+  height: 55vh;
+  overflow-x: hidden;
+
+  border-radius: 12px 12px 0 0;
+
+  transition: transform 0.5s ease-in;
+  transform: translateY(100%);
+}
+
+.lobbySettingsOpened {
+  transform: translateY(0);
+}
+
+.lobbySettingsContent {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+}
+
+.lobbySettingsContent * {
+  color: var(--text-active-color);
+  fill: var(--text-active-color);
+}
+
+.settingsBg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: -1;
+
+  max-height: 100%;
+
+  object-fit: cover;
+  filter: brightness(50%);
+}
+
+.settingsTitle {
+  background-color: transparent;
+
+  cursor: default;
+}
+
+.settingsTitle svg {
+  width: 24px;
+  height: 24px;
+}
+
+.settingsInputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.settingsInputs {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.inputWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.lobbySettingsContent *:has(+ button) {
+  flex-grow: 1;
+}

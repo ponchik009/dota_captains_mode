@@ -1,0 +1,38 @@
+.radiant-active {
+  color: var(--radiant-color);
+}
+
+.dire-active {
+  color: var(--dire-color);
+}
+
+.picks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding-bottom: 16px;
+}
+
+.stage {
+  display: flex;
+  justify-content: center;
+  gap: 96px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  justify-content: space-between;
+  width: 100%;
+}
+
+.radiant {
+  align-items: flex-end;
+}
+
+.dire {
+  align-items: flex-start;
+}

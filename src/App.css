@@ -6,48 +6,5 @@
   background-color: var(--bg-color);
 
   min-height: 100vh;
-}
-
-h2 {
-  color: var(--text-color);
-}
-
-h2.radiant-active {
-  color: var(--radiant-color);
-}
-
-h2.dire-active {
-  color: var(--dire-color);
-}
-
-.picks {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  padding-bottom: 16px;
-}
-
-.stage {
-  display: flex;
-  justify-content: center;
-  gap: 96px;
-}
-
-.side {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  justify-content: space-between;
-  height: 100%;
   width: 100%;
-}
-
-.radiant {
-  align-items: flex-end;
-}
-
-.dire {
-  align-items: flex-start;
 }

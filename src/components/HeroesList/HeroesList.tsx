@@ -3,7 +3,7 @@ import React from "react";
 import classNames from "classnames";
 
 import styles from "./HeroesList.module.css";
-import { ReactComponent as IconArrowLeft } from "../../assets/IconArrowLeft.svg";
+import { ReactComponent as IconArrowLeft } from "../../assets/icons/IconArrowLeft.svg";
 
 import { Hero } from "../../types/data.types";
 import { GroupedHeroes, PickBan } from "../../types/state.types";
