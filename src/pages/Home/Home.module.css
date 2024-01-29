@@ -50,7 +50,7 @@
   z-index: 5;
 
   width: 100%;
-  min-height: 55vh;
+  min-height: 55dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;

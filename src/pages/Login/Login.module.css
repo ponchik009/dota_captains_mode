@@ -1,0 +1,14 @@
+.loginInButton {
+  margin: auto;
+  width: fit-content;
+  text-decoration: none;
+}
+
+.loginInButton button {
+  background-color: transparent;
+}
+
+.loginInButton svg {
+  width: 48px;
+  height: 48px;
+}

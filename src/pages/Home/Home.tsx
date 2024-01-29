@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
@@ -7,9 +7,12 @@ import styles from "./Home.module.css";
 import LobbySettingBg from "../../assets/img/LobbySettingsBg.png";
 
 import { ReactComponent as IconSettings } from "../../assets/icons/IconSettings.svg";
+import { UserContext } from "../../App";
 
 export const Home = () => {
   const navigate = useNavigate();
+
+  const { user } = useContext(UserContext);
 
   const [startClicked, setStartClicked] = React.useState(false);
 
@@ -24,7 +27,9 @@ export const Home = () => {
 
   return (
     <div className={classNames("page", styles.homePage)}>
-      <h2 className={styles.welcomeBlock}>Welcome back, {"{Username}"}!</h2>
+      <h2 className={styles.welcomeBlock}>
+        Welcome back, {user ? user.profile.personaname : "{Username}"}!
+      </h2>
       <button className={styles.playButton} onClick={onSettingsClick}>
         Become captain
       </button>
