@@ -101,7 +101,7 @@ export const Play = () => {
         Math.floor(Math.random() * audios[hero.localized_name].length)
       ];
     const randomAudio = new Audio(randomAudioSrc);
-    // randomAudio.play();
+    randomAudio.play();
 
     setHeroesListOpened(false);
 
