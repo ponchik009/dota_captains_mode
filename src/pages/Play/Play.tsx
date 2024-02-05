@@ -9,7 +9,7 @@ import { PickCard } from "../../components/PickCard/PickCard";
 import { OrderSign } from "../../components/OrderSign/OrderSign";
 
 import { PickedHero, SidesType } from "../../types/state.types";
-import { Hero } from "../../types/data.types";
+import { ConfigAudioMap, Hero } from "../../types/data.types";
 
 import { BONUS_TIME, DEFAULT_PHASE, FIRST_PHASE } from "../../const/timings";
 import {
@@ -21,6 +21,7 @@ import {
 } from "../../const/stages";
 
 import { OpenDotaApi } from "../../api/openDotaApi";
+import { CaptainsApi } from "../../api/captainsApi";
 
 export const Play = () => {
   const [activeSide, setActiveSide] = React.useState<SidesType>("radiant");
@@ -37,6 +38,9 @@ export const Play = () => {
   const [heroesListOpened, setHeroesListOpened] = React.useState(false);
   const [heroes, setHeroes] = React.useState<Hero[]>([]);
   const [pickBans, setPickBans] = React.useState<PickedHero[]>([]);
+
+  const [audios, setAudios] = React.useState<ConfigAudioMap>({});
+  // const currentAudio = React.useRef<typeof Audio | null>(null);
 
   const updateTime = () => {
     if (activeSide === "radiant") {
@@ -81,14 +85,24 @@ export const Play = () => {
           randomHero = heroes[Math.floor(Math.random() * heroes.length)];
         }
 
-        onHeroClick(randomHero.id);
+        onHeroClick(randomHero);
       } else {
         setHeroesListOpened(true);
       }
     }
   };
 
-  const onHeroClick = (heroId: number) => {
+  const onHeroClick = (hero: Hero) => {
+    const heroId = hero.id;
+
+    // play audio
+    const randomAudioSrc =
+      audios[hero.localized_name][
+        Math.floor(Math.random() * audios[hero.localized_name].length)
+      ];
+    const randomAudio = new Audio(randomAudioSrc);
+    // randomAudio.play();
+
     setHeroesListOpened(false);
 
     setPickBans((prev) => {
@@ -119,6 +133,7 @@ export const Play = () => {
 
   React.useEffect(() => {
     OpenDotaApi.getHeroes().then(setHeroes);
+    CaptainsApi.fetchConfigAudio().then(setAudios);
   }, []);
 
   React.useEffect(() => {

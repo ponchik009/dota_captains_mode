@@ -15,7 +15,7 @@ interface IHeroesListProps {
   heroes: Hero[];
   disabledHeroes: { id: number; type: PickBan }[];
 
-  onHeroClick: (heroId: number) => void;
+  onHeroClick: (hero: Hero) => void;
 }
 
 function groupHeroes(heroes: Hero[]) {
@@ -43,11 +43,12 @@ export const HeroesList: React.FC<IHeroesListProps> = React.memo(
       groupHeroes(heroes)
     );
 
-    const handleHeroClick = (id: number) => {
+    const handleHeroClick = (hero: Hero) => {
+      const id = hero.id;
       const disabled = disabledHeroes.some((dh) => dh.id === id);
 
       if (!disabled) {
-        onHeroClick(id);
+        onHeroClick(hero);
       }
     };
 
@@ -88,7 +89,7 @@ export const HeroesList: React.FC<IHeroesListProps> = React.memo(
                   key={h.id}
                 >
                   <img
-                    onClick={() => handleHeroClick(h.id)}
+                    onClick={() => handleHeroClick(h)}
                     className={classNames(styles.heroImage, {
                       [styles.heroImageDisabled]: disabledHero,
                     })}
