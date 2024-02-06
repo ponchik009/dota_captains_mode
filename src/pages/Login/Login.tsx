@@ -18,12 +18,12 @@ export const Login = () => {
 
   return (
     <div className="page">
-      <Link to={`${API_URL}/auth/login`} className={styles.loginInButton}>
+      <a href={`${API_URL}/auth/login`} className={styles.loginInButton}>
         <button>
           <IconSteam />
           Log in with Steam
         </button>
-      </Link>
+      </a>
     </div>
   );
 };
