@@ -3,14 +3,40 @@ import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
 import styles from "./Home.module.css";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import LobbySettingBg from "../../assets/img/LobbySettingsBg.png";
 
 import { ReactComponent as IconSettings } from "../../assets/icons/IconSettings.svg";
 import { UserContext } from "../../App";
+import {
+  CreateLobbyData,
+  CreateLobbyTypeEnum,
+  CreateLobbySideEnum,
+} from "../../types/data.types";
+import { CaptainsApi } from "../../api/captainsApi";
+
+type CreateLobbyForm = {
+  side: CreateLobbySideEnum;
+  lobbyType: CreateLobbyTypeEnum;
+};
+
+const getRandomSide = () =>
+  Math.random() > 0.5 ? CreateLobbySideEnum.DIRE : CreateLobbySideEnum.RADIANT;
 
 export const Home = () => {
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateLobbyForm>({
+    defaultValues: {
+      lobbyType: CreateLobbyTypeEnum.CLOSE,
+      side: CreateLobbySideEnum.ANY,
+    },
+  });
 
   const { user } = useContext(UserContext);
 
@@ -20,9 +46,15 @@ export const Home = () => {
     setStartClicked(true);
   };
 
-  const onStartClick = () => {
-    // any logic of creating lobby
-    navigate(`/play/${Math.floor(Math.random() * 100000)}`);
+  const onStartClick: SubmitHandler<CreateLobbyForm> = async (data) => {
+    const lobbySettings: CreateLobbyData = {
+      type: data.lobbyType,
+      side: data.side === CreateLobbySideEnum.ANY ? getRandomSide() : data.side,
+    };
+
+    const lobby = await CaptainsApi.createLobby(lobbySettings);
+
+    navigate(`/play/${lobby.id}`);
   };
 
   return (
@@ -44,7 +76,10 @@ export const Home = () => {
           [styles.lobbySettingsOpened]: startClicked,
         })}
       >
-        <form className={styles.lobbySettingsContent} onSubmit={onStartClick}>
+        <form
+          className={styles.lobbySettingsContent}
+          onSubmit={handleSubmit(onStartClick)}
+        >
           <img src={LobbySettingBg} alt="" className={styles.settingsBg} />
           <button className={classNames(styles.settingsTitle)}>
             <IconSettings />
@@ -55,11 +90,24 @@ export const Home = () => {
             <div className={styles.settingsInputs}>
               <label htmlFor="open" className={styles.inputWrapper}>
                 Open
-                <input type="radio" id="open" name="type" disabled />
+                <input
+                  {...register("lobbyType")}
+                  type="radio"
+                  id="open"
+                  name="lobbyType"
+                  value={CreateLobbyTypeEnum.OPEN}
+                  disabled
+                />
               </label>
               <label htmlFor="close" className={styles.inputWrapper}>
                 Close
-                <input type="radio" id="close" name="type" />
+                <input
+                  {...register("lobbyType")}
+                  type="radio"
+                  id="close"
+                  name="lobbyType"
+                  value={CreateLobbyTypeEnum.CLOSE}
+                />
               </label>
             </div>
           </div>
@@ -68,15 +116,33 @@ export const Home = () => {
             <div className={styles.settingsInputs}>
               <label htmlFor="radiant" className={styles.inputWrapper}>
                 Radiant
-                <input type="radio" id="radiant" name="side" />
+                <input
+                  {...register("side")}
+                  type="radio"
+                  id="radiant"
+                  name="side"
+                  value={CreateLobbySideEnum.RADIANT}
+                />
               </label>
               <label htmlFor="dire" className={styles.inputWrapper}>
                 Dire
-                <input type="radio" id="dire" name="side" />
+                <input
+                  {...register("side")}
+                  type="radio"
+                  id="dire"
+                  name="side"
+                  value={CreateLobbySideEnum.DIRE}
+                />
               </label>
               <label htmlFor="any" className={styles.inputWrapper}>
                 Any
-                <input type="radio" id="any" name="side" />
+                <input
+                  {...register("side")}
+                  type="radio"
+                  id="any"
+                  name="side"
+                  value={CreateLobbySideEnum.ANY}
+                />
               </label>
             </div>
           </div>

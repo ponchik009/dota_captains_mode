@@ -1,6 +1,13 @@
 import axios from "axios";
+
 import { API_URL } from "../const/env";
-import { ConfigAudio, ConfigPicks, User } from "../types/data.types";
+import {
+  ConfigAudio,
+  ConfigPicks,
+  CreateLobbyData,
+  Lobby,
+  User,
+} from "../types/data.types";
 
 export class CaptainsApi {
   private static instance = axios.create({
@@ -31,5 +38,21 @@ export class CaptainsApi {
     return await CaptainsApi.instance
       .get<ConfigPicks>("/captains-config/picks/last")
       .then((response) => response.data.config);
+  }
+
+  public static async createLobby(dto: CreateLobbyData) {
+    return await CaptainsApi.instance
+      .post<Lobby>("/lobby", dto, {
+        withCredentials: true,
+      })
+      .then((response) => response.data);
+  }
+
+  public static async fetchLobbyById(id: string) {
+    return await CaptainsApi.instance
+      .get<Lobby>(`/lobby/${id}`, {
+        withCredentials: true,
+      })
+      .then((response) => response.data);
   }
 }

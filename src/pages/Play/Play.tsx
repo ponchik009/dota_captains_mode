@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import classNames from "classnames";
+import { useParams } from "react-router-dom";
 
 import styles from "./Play.module.css";
 
@@ -9,7 +10,12 @@ import { PickCard } from "../../components/PickCard/PickCard";
 import { OrderSign } from "../../components/OrderSign/OrderSign";
 
 import { PickedHero, SidesType } from "../../types/state.types";
-import { ConfigAudioMap, Hero } from "../../types/data.types";
+import {
+  ConfigAudioMap,
+  CreateLobbySideEnum,
+  Hero,
+  Lobby,
+} from "../../types/data.types";
 
 import { BONUS_TIME, DEFAULT_PHASE, FIRST_PHASE } from "../../const/timings";
 import {
@@ -23,7 +29,24 @@ import {
 import { OpenDotaApi } from "../../api/openDotaApi";
 import { CaptainsApi } from "../../api/captainsApi";
 
+import { UserContext } from "../../App";
+
 export const Play = () => {
+  const { id } = useParams();
+
+  const { user } = useContext(UserContext);
+
+  const [lobby, setLobby] = React.useState<null | Lobby>(null);
+
+  const radiantPlayer = React.useMemo(
+    () => lobby?.players.find((p) => p.side === CreateLobbySideEnum.RADIANT),
+    [lobby]
+  );
+  const direPlayer = React.useMemo(
+    () => lobby?.players.find((p) => p.side === CreateLobbySideEnum.DIRE),
+    [lobby]
+  );
+
   const [activeSide, setActiveSide] = React.useState<SidesType>("radiant");
   const [activeTime, setActiveTime] = React.useState<ActiveTime>("base");
   const [currentPick, setCurrentPick] = React.useState(1);
@@ -40,7 +63,6 @@ export const Play = () => {
   const [pickBans, setPickBans] = React.useState<PickedHero[]>([]);
 
   const [audios, setAudios] = React.useState<ConfigAudioMap>({});
-  // const currentAudio = React.useRef<typeof Audio | null>(null);
 
   const updateTime = () => {
     if (activeSide === "radiant") {
@@ -195,6 +217,12 @@ export const Play = () => {
     }
   }, [direBonusTime]);
 
+  React.useEffect(() => {
+    if (id) {
+      CaptainsApi.fetchLobbyById(id || "").then(setLobby);
+    }
+  }, [id]);
+
   return (
     <div className={"page"}>
       <Timing
@@ -229,7 +257,9 @@ export const Play = () => {
                 [styles["radiant-active"]]: activeSide === "radiant",
               })}
             >
-              Radiant
+              {radiantPlayer?.player.id === user?.id
+                ? user?.profile.personaname
+                : "Radiat"}
             </h2>
           </div>
           <div className={classNames(styles.side, styles.dire)}>
@@ -238,7 +268,9 @@ export const Play = () => {
                 [styles["dire-active"]]: activeSide === "dire",
               })}
             >
-              Dire
+              {direPlayer?.player.id === user?.id
+                ? user?.profile.personaname
+                : "Dire"}
             </h2>
           </div>
         </div>

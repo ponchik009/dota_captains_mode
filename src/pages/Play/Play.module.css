@@ -29,10 +29,27 @@
   width: 100%;
 }
 
+.side h2 {
+  font-size: 20px;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 130px;
+}
+
 .radiant {
   align-items: flex-end;
 }
 
 .dire {
   align-items: flex-start;
+}
+
+.radiant h2 {
+  text-align: end;
+}
+
+.dire h2 {
+  text-align: start;
 }
