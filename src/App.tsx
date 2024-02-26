@@ -1,10 +1,16 @@
 import React from "react";
+import { Socket } from "socket.io-client";
 
 import "./App.css";
 
 import { Router } from "./components/Router/Router";
 import { User } from "./types/data.types";
-import { CaptainsApi } from "./api/captainsApi";
+import {
+  CaptainsApi,
+  ClientToServerEvents,
+  ServerToClientEvents,
+  socket,
+} from "./api/captainsApi";
 
 export const UserContext = React.createContext<{
   user: User | null;
@@ -18,10 +24,20 @@ export const UserContext = React.createContext<{
   onLogin: () => {},
 });
 
+export const SocketContext = React.createContext<{
+  connected: boolean;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+}>({
+  connected: false,
+  socket: socket,
+});
+
 function App() {
   const [user, setUser] = React.useState<User | null>(null);
   const [userError, setUserError] = React.useState("");
   const [userLoading, setUserLoading] = React.useState(false);
+
+  const [socketConnected, setSocketConnected] = React.useState(false);
 
   const onLogin = () => {
     setUserLoading(true);
@@ -45,12 +61,24 @@ function App() {
       .finally(() => setUserLoading(false));
   }, []);
 
+  React.useEffect(() => {
+    socket.on("connect", () => {
+      setSocketConnected(true);
+    });
+
+    socket.on("disconnect", () => {
+      setSocketConnected(false);
+    });
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user, userError, userLoading, onLogin }}>
-      <div className="App">
-        <Router />
-      </div>
-    </UserContext.Provider>
+    <SocketContext.Provider value={{ socket, connected: socketConnected }}>
+      <UserContext.Provider value={{ user, userError, userLoading, onLogin }}>
+        <div className="App">
+          <Router />
+        </div>
+      </UserContext.Provider>
+    </SocketContext.Provider>
   );
 }
 

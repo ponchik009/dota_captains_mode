@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Socket, io } from "socket.io-client";
 
 import { API_URL } from "../const/env";
 import {
@@ -8,6 +9,22 @@ import {
   Lobby,
   User,
 } from "../types/data.types";
+
+export interface ServerToClientEvents {
+  joined_lobby: ({ lobby, users }: { lobby: Lobby; users: User[] }) => void;
+}
+
+export interface ClientToServerEvents {
+  join_lobby: (id: string) => void;
+}
+
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+  "localhost:3002",
+  {
+    withCredentials: true,
+    transports: ["websocket", "polling", "flashsocket"],
+  }
+);
 
 export class CaptainsApi {
   private static instance = axios.create({
@@ -55,4 +72,8 @@ export class CaptainsApi {
       })
       .then((response) => response.data);
   }
+
+  // public static async joinLobby(id: string) {
+  //   return CaptainsApi.socket.emit("join_lobby", id);
+  // }
 }

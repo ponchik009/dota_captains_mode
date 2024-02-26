@@ -15,6 +15,7 @@ import {
   CreateLobbySideEnum,
   Hero,
   Lobby,
+  User,
 } from "../../types/data.types";
 
 import { BONUS_TIME, DEFAULT_PHASE, FIRST_PHASE } from "../../const/timings";
@@ -29,23 +30,16 @@ import {
 import { OpenDotaApi } from "../../api/openDotaApi";
 import { CaptainsApi } from "../../api/captainsApi";
 
-import { UserContext } from "../../App";
+import { SocketContext, UserContext } from "../../App";
 
 export const Play = () => {
   const { id } = useParams();
 
   const { user } = useContext(UserContext);
+  const { connected, socket } = useContext(SocketContext);
 
   const [lobby, setLobby] = React.useState<null | Lobby>(null);
-
-  const radiantPlayer = React.useMemo(
-    () => lobby?.players.find((p) => p.side === CreateLobbySideEnum.RADIANT),
-    [lobby]
-  );
-  const direPlayer = React.useMemo(
-    () => lobby?.players.find((p) => p.side === CreateLobbySideEnum.DIRE),
-    [lobby]
-  );
+  const [viewers, setViewers] = React.useState<User[]>([]);
 
   const [activeSide, setActiveSide] = React.useState<SidesType>("radiant");
   const [activeTime, setActiveTime] = React.useState<ActiveTime>("base");
@@ -63,6 +57,29 @@ export const Play = () => {
   const [pickBans, setPickBans] = React.useState<PickedHero[]>([]);
 
   const [audios, setAudios] = React.useState<ConfigAudioMap>({});
+
+  const radiantPlayer = React.useMemo(() => {
+    const player = lobby?.players.find(
+      (p) => p.side === CreateLobbySideEnum.RADIANT
+    );
+
+    if (player) {
+      return viewers.find((v) => v.id === player.player.id);
+    }
+
+    return null;
+  }, [viewers, lobby]);
+  const direPlayer = React.useMemo(() => {
+    const player = lobby?.players.find(
+      (p) => p.side === CreateLobbySideEnum.DIRE
+    );
+
+    if (player) {
+      return viewers.find((v) => v.id === player.player.id);
+    }
+
+    return null;
+  }, [lobby]);
 
   const updateTime = () => {
     if (activeSide === "radiant") {
@@ -159,6 +176,13 @@ export const Play = () => {
   }, []);
 
   React.useEffect(() => {
+    socket.on("joined_lobby", ({ lobby, users }) => {
+      setViewers(users);
+      setLobby(lobby);
+    });
+  }, []);
+
+  React.useEffect(() => {
     updateTimer();
 
     return () => {
@@ -223,6 +247,12 @@ export const Play = () => {
     }
   }, [id]);
 
+  React.useEffect(() => {
+    if (connected && id) {
+      socket.emit("join_lobby", id);
+    }
+  }, [connected]);
+
   return (
     <div className={"page"}>
       <Timing
@@ -257,9 +287,7 @@ export const Play = () => {
                 [styles["radiant-active"]]: activeSide === "radiant",
               })}
             >
-              {radiantPlayer?.player.id === user?.id
-                ? user?.profile.personaname
-                : "Radiat"}
+              {radiantPlayer?.profile.personaname || "Radiant"}
             </h2>
           </div>
           <div className={classNames(styles.side, styles.dire)}>
@@ -268,9 +296,7 @@ export const Play = () => {
                 [styles["dire-active"]]: activeSide === "dire",
               })}
             >
-              {direPlayer?.player.id === user?.id
-                ? user?.profile.personaname
-                : "Dire"}
+              {direPlayer?.profile.personaname || "Dire"}
             </h2>
           </div>
         </div>
