@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Socket, io } from "socket.io-client";
 
-import { API_URL } from "../const/env";
+import { API_URL, SOCKET_URL } from "../const/env";
 import {
   ConfigAudio,
   ConfigPicks,
@@ -19,7 +19,7 @@ export interface ClientToServerEvents {
 }
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  "localhost:3002",
+  SOCKET_URL,
   {
     withCredentials: true,
     transports: ["websocket", "polling", "flashsocket"],
